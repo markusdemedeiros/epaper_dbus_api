@@ -1,13 +1,14 @@
 # Epaper DBUS API
-A DBus API which exposes drawing features of the Waveshare 7.5 inch epaper screen to other programs. 
+A DBus API which exposes drawing features of the Waveshare 7.5 inch epaper screen to other programs. Designed to unify and coordinate commands from several different sources. 
 
-## Disclaimer
-I am very new to using DBus, asynchronous C programming, and a myriad of other topics used in this project. Keep in mind that this is primarilty a project to learn these tools if you attempt to use this code. I value any and all feedback!
+**Disclaimer:** I am still very new to using DBus, asynchronous C programming, and the myriad of other topics used in this project. Keep in mind that this is primarilty a project to learn these tools if you attempt to use this code. I value any and all feedback!
 
 
 ## Configuration
 - Permissions:
-	This program needs to be run as root in order to access the GPIO pins. Additionally, dbus needs to allow this program system bus access. This will differ based on your specific system, but on my system it was sufficient to add a file `/etc/dbus-1/system.d/epaper-dbus.conf`:
+	This program needs to be run as root in order to access the GPIO pins. Additionally, dbus needs to allow this program system bus access. This may differ by system, on my raspberry pi it was sufficient to add the file
+
+#### **`/etc/dbus-1/system.d/epaper-dbus.conf`**
 ```
 <!DOCTYPE busconfig PUBLIC
           "-//freedesktop//DTD D-BUS Bus Configuration 1.0//EN"
@@ -32,24 +33,24 @@ To start up the server, run `./epd` as root. A server can revieve the following 
 | push   | Draws the buffered image to the epaper display |
 | clear  | Clears the epaper display to white |
 
-The server is multithreaded so none of these commands block the DBus interface. The server enqueues commands to be excecuted in the order it recieves them. This is particularly important since, on an epaper display, the `push` and `clear` arguments take several seconds to complete. 
+The server places the DBus communuication on a different thread than the excecution of these commands, enqueuing them to be excecuted in the order they are recieved. This is particularly important since, on an epaper display, the `push` and `clear` arguments take several seconds to complete. 
 
-A typical use case would have one program periodically sending `apply` commands for commonly drawn elements and `push`ing the results to the screen, and several other programs which update less frequently sending their `apply` commands to the screen and only `push`ing if an update is urgent. 
+A typical use case would have one program periodically sending `apply` commands for commonly drawn elements and `push`ing the results to the screen, while several other programs which update less frequently send their `apply` commands to the screen when needed to be updated on the next screen `push`. These proxy programs could also `push` an update if it is urgent enough to justify the long refresh time.
 
-Each of these commands will return `(1,)` if it was revieced successfully. API Commands are also outlined in the `introspect` dbus interface. 
+Each of the API methods will return `(1,)` if it was revieced successfully. The `introspectable` interface is also implemented. 
 
 ### Apply arguments
-The apply method takes one argument which has type `[(qqqqqyyyys)]`. Each struct represents a drawing command, and the entire array will be excecuted atomically- this prevents a `push` when an element is partially drawn. 
+The apply method takes one argument which is an array of structs and has type `[(qqqqqyyyys)]`, representing sequence of drawing commands. This sequence is excecuted atomically- no `push` will display a partially drawn image to the screen. 
 
-A drawing command is a struct consisting of the fields
+A drawing command consists of the fields:
 ```
 (cmd, x0, y0, x1, y1, color_f, color_b, dot_pixel, aux, data)
 ```
 which are interpreted as defined in this table
 | cmd | description |
 | --- | ----------- |
-| 0x0 | clears screen to colour `color_f` |
-| 0x1 | clears screen in the rectangle (`x0`, `y0`, `x1`, `y1`) to `color_f` |
+| 0x0 | clears image to colour `color_f` |
+| 0x1 | clears image in the rectangle (`x0`, `y0`, `x1`, `y1`) to `color_f` |
 | 0x2 | colours pixel (`x0`, `y0`) to `color_f` |
 | 0x3 | draws a point at (`x0`, `y0`) with color `color_f`, dot type (width) `dot_pixel`, and dot style `aux` |
 | 0x4 | draws a line from (`x0`, `y0`) to (`x1`, `y1`) with color `color_f`, line type (width) `dot_pixel`, and line style `aux` |
@@ -58,10 +59,9 @@ which are interpreted as defined in this table
 | 0x7 | draws the string `dat` at position (`x0`, `y0`), with foreground color `color_f`, background color `col_b`, and font `aux` |
 | 0x8 | draws the bitmap file `dat` at position (`x0`, `y0`) |
 
-and are applied to the image buffer. Malformed commands fail silently. 
+These drawing commands are applied to the image buffer, and are displayed on the screen on the next `push`. 
 
-To enable support for more fonts or colours (for example, a shaded or hatchmarked fill), you can edit the lookup tables in `src/screendriver.c`. This will change how arguments are interpreted when they are drawn to the screen. 
-
+To enable support for more fonts or colours (for example, a shaded or hatchmarked fill), you can edit the lookup tables in `src/screendriver.c` (information from the wiki may also be helpful here). These tables change how arguments are interpreted when they are drawn to the screen, and modification of the `screendriver` allows more complicated actions to be interpreted directly as commands. 
 
 ## Attribution
 - Queue Library: [StsQueue](https://github.com/petercrona/StsQueue)
