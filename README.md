@@ -1,7 +1,7 @@
 # Epaper DBUS API
 A DBus API which exposes drawing features of the Waveshare 7.5 inch epaper screen to other programs. Designed to unify and coordinate commands from several different sources. 
 
-**Disclaimer:** I am still very new to using DBus, asynchronous C programming, and the myriad of other topics used in this project. Keep in mind that this is primarilty a project to learn these tools if you attempt to use this code. I value any and all feedback!
+__Disclaimer:__ I am still very new to using DBus, asynchronous C programming, and the myriad of other topics used in this project. Keep in mind that this is primarilty a project to learn these tools if you attempt to use this code. I value any and all feedback!
 
 
 ## Configuration
@@ -17,7 +17,7 @@ A DBus API which exposes drawing features of the Waveshare 7.5 inch epaper scree
   <!-- Allow anyone to own epaper-->
   <policy context="default">
     <allow own="io.markusde.epaper"/>
-	<allow send_destination="io.markusde.epaper"/>
+    <allow send_destination="io.markusde.epaper"/>
   </policy>
 </busconfig>
 ```
@@ -61,7 +61,7 @@ which are interpreted as defined in this table
 
 These drawing commands are applied to the image buffer, and are displayed on the screen on the next `push`. 
 
-To enable support for more fonts or colours (for example, a shaded or hatchmarked fill), you can edit the lookup tables in `src/screendriver.c` (information from the wiki may also be helpful here). These tables change how arguments are interpreted when they are drawn to the screen, and modification of the `screendriver` allows more complicated actions to be interpreted directly as commands. 
+To enable support for more fonts or colours (for example, a shaded or hatchmarked fill), you can edit the lookup tables in `src/screendriver.c` (information from the wiki may also be helpful here). These tables change how arguments are interpreted when they are drawn to the screen, and modification of the `screendriver` allows more complicated actions to be interpreted directly as commands. Additionally, the file `readme_EN.txt` provides Waveshare's included information about using their GUI libraries. 
 
 ## Attribution
 - Queue Library: [StsQueue](https://github.com/petercrona/StsQueue)
@@ -70,4 +70,4 @@ To enable support for more fonts or colours (for example, a shaded or hatchmarke
 
 - GPIO Library: [BCM2835](http://www.airspayce.com/mikem/bcm2835/)
 
-- DBus Library: This project uses `libdbus-1-dev`, as found in the regular raspberry pi repositories. The tool `gdbus` is used in some of the example scripts and is very helpful for manually communuicating with the server (`dbus-send` does not allow sending nested containers, so won't be able to send 
+- DBus Library: This project uses `libdbus-1-dev`, as found in the regular raspberry pi repositories. The tool `gdbus` is used in some of the example scripts and is very helpful for manually communuicating with the server (`dbus-send` does not allow sending the nested containers used by the `apply` method)
