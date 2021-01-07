@@ -54,11 +54,6 @@ struct apply_args {
 
 typedef struct apply_args apply_args_t;
 
-
-
-
-
-
 extern executable_t d_dosetup;
 extern executable_t d_doclose;
 extern executable_t d_dopush;

@@ -195,38 +195,30 @@ static DBusHandlerResult draw_messages(DBusConnection *connection, DBusMessage *
 	}
 	
 
-	// Interpret request and modify API command
 	if (0==strcmp("io.markusde.epaper", interface_name) && 0==strcmp("setup", member_name)) { 
 		printf("[server] Enqueuing setup...\n");	
 		EnqCommand(d_dosetup, NULL);
 		reply_result(connection, message, 1);
-		// c->command = d_dosetup;
 	}
 	else if (0==strcmp("io.markusde.epaper", interface_name) && 0==strcmp("close", member_name)) {
 		printf("[server] Enqueuing close...\n");	
 		EnqCommand(d_doclose, NULL);
 		reply_result(connection, message, 1);
-
-
-		// c->command = d_doclose;
 	}
 	else if (0==strcmp("io.markusde.epaper", interface_name) && 0==strcmp("push", member_name)) { 
 		printf("[server] Enqueuing push...\n");	
 		EnqCommand(d_dopush, NULL);
 		reply_result(connection, message, 1);
-		// c->command = d_dopush;
 	}
 	else if (0==strcmp("io.markusde.epaper", interface_name) && 0==strcmp("clear", member_name)) {
 		printf("[server] Enqueuing clear...\n");	
 		EnqCommand(d_doclear, NULL);
 		reply_result(connection, message, 1);
-		// c->command = d_doclear;
 	}
 	else if (0==strcmp("io.markusde.epaper", interface_name) && 0==strcmp("flush", member_name)) {
 		printf("[server] Enqueuing flush...\n");	
 		EnqCommand(d_doflush, NULL);
 		reply_result(connection, message, 1);
-		// c->command = d_doflush;
 	}
 	else if (0==strcmp("io.markusde.epaper", interface_name) && 0==strcmp("apply", member_name)) {
 		printf("[server] Enqueuing apply...\n");	
@@ -333,11 +325,7 @@ static void respond_to_introspect(DBusConnection *connection, DBusMessage *reque
 		"	  </method>"
 		"	</interface>"
 		" </node>";
-/*
- * <arg name=\"a\" direction=\"in\" type=\"i\" />"
- * <arg name=\"ret\" direction=\"out\" type=\"i\" />"
- *
- */			     
+	
 	reply = dbus_message_new_method_return(request);
 	dbus_message_append_args(reply, DBUS_TYPE_STRING, &introspection_data, DBUS_TYPE_INVALID);
 	dbus_connection_send(connection, reply, NULL);
@@ -349,10 +337,8 @@ static void respond_to_apply(DBusConnection *connection, DBusMessage *request) {
 	DBusError error;
 	DBusMessageIter msgIter;
 
-	
 	dbus_error_init(&error);
 	dbus_message_iter_init(request, &msgIter);
-	// dbus_message_iter_init(request, &StructIter);
 	
 	if (dbus_error_is_set(&error)) {
 			printf("	Apply has setup error\n");
@@ -399,27 +385,4 @@ static void respond_to_apply(DBusConnection *connection, DBusMessage *request) {
 	
 	reply_result(connection, request, 1);
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    // DBusMessage *reply;
-	// reply = dbus_message_new_error(request, "wrong_arguments", "Illegal arguments to Sum");
-		// dbus_connection_send(connection, reply, NULL);
-		// dbus_message_unref(reply);
-	// ret = a+b;
-	// reply = dbus_message_new_method_return(request);
-	// dbus_message_append_args(reply, DBUS_TYPE_INT32, &ret, DBUS_TYPE_INVALID);
-	// dbus_connection_send(connection, reply, NULL);
-	// dbus_message_unref(reply);
 
