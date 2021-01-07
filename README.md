@@ -33,7 +33,7 @@ To start up the server, run `./epd` as root. A server can revieve the following 
 | push   | Draws the buffered image to the epaper display |
 | clear  | Clears the epaper display to white |
 
-The server places the DBus communuication on a different thread than the excecution of these commands, enqueuing them to be excecuted in the order they are recieved. This is particularly important since, on an epaper display, the `push` and `clear` arguments take several seconds to complete. 
+The server places the DBus communuication on a different thread than the excecution of these commands, enqueuing them to be excecuted in the order they are recieved. This is particularly important since, on an epaper display, the `push` and `clear` methods take several seconds to complete. 
 
 A typical use case would have one program periodically sending `apply` commands for commonly drawn elements and `push`ing the results to the screen, while several other programs which update less frequently send their `apply` commands to the screen when needed to be updated on the next screen `push`. These proxy programs could also `push` an update if it is urgent enough to justify the long refresh time.
 
@@ -46,7 +46,7 @@ A drawing command consists of the fields:
 ```
 (cmd, x0, y0, x1, y1, color_f, color_b, dot_pixel, aux, data)
 ```
-which are interpreted as defined in this table
+which are interpreted as
 | cmd | description |
 | --- | ----------- |
 | 0x0 | clears image to colour `color_f` |
@@ -59,9 +59,9 @@ which are interpreted as defined in this table
 | 0x7 | draws the string `dat` at position (`x0`, `y0`), with foreground color `color_f`, background color `col_b`, and font `aux` |
 | 0x8 | draws the bitmap file `dat` at position (`x0`, `y0`) |
 
-These drawing commands are applied to the image buffer, and are displayed on the screen on the next `push`. 
+These drawing commands are applied immediately to the image buffer, which is displayed to the screen on the next `push`. 
 
-To enable support for more fonts or colours (for example, a shaded or hatchmarked fill), you can edit the lookup tables in `src/screendriver.c` (information from the wiki may also be helpful here). These tables change how arguments are interpreted when they are drawn to the screen, and modification of the `screendriver` allows more complicated actions to be interpreted directly as commands. Additionally, the file `readme_EN.txt` provides Waveshare's included information about using their GUI libraries. 
+To enable support for more fonts or colours (for example, a shaded or hatchmarked fill), you can edit the lookup tables in `src/screendriver.c`. These tables change how arguments are interpreted when they are drawn to the screen, and further modification of the `screendriver` allows more complicated actions to be interpreted directly as commands. Additionally the file `readme_EN.txt` provides Waveshare's included information about using their GUI libraries, which may be helpful in writing custom commands. 
 
 ## Attribution
 - Queue Library: [StsQueue](https://github.com/petercrona/StsQueue)
