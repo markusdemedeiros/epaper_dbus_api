@@ -1,7 +1,7 @@
 # Epaper DBUS API
 A DBus API which exposes drawing features of the Waveshare 7.5 inch epaper screen to other programs. Designed to unify and coordinate commands from several different sources. 
 
-__Disclaimer:__ I am still very new to using DBus, asynchronous C programming, and the myriad of other topics used in this project. Keep in mind that this is primarilty a project to learn these tools if you attempt to use this code. I value any and all feedback!
+_Disclaimer:_ I am still very new to using DBus, asynchronous C programming, and the myriad of other topics used in this project. Keep in mind that this is primarilty a project to learn these tools if you attempt to use this code. I value any and all feedback!
 
 
 ## Configuration
