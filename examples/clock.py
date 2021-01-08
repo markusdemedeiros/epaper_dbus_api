@@ -9,7 +9,7 @@ screen_obj = bus.get_object("io.markusde.epaper", "/io/markusde/epaper")
 screen = dbus.Interface(screen_obj, "io.markusde.epaper")
 
 # Example clock body
-CL_X0=400   # Clock centre x
+CL_X0=600   # Clock centre x
 CL_Y0=240   # Clock centre y
 CL_R0=150   # Clock outline radius
 CL_LW=5     # Clock outline linewidth
@@ -50,8 +50,7 @@ def signal_handler(sig, frame):
 def main():
     try:
         signal.signal(signal.SIGINT, signal_handler)
-        screen.setup()
-        screen.flush()
+        time.sleep(5)  # Allow short setup time for other programs to enqueue initial commands
         while(1):
             screen.apply(clock_body())
             screen.push()
